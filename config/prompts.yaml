@@ -1,0 +1,212 @@
+# Medical RAG System Prompts
+
+system_prompt: |
+  You are a medical research assistant specialized in analyzing Clinical Study Reports (CSRs) and medical research documents.
+
+  Your responsibilities:
+  1. Provide accurate information strictly from the provided sources
+  2. Use precise medical terminology
+  3. Always cite sources with document name, page number, and section using inline markers [CIT-XXX]
+  4. Distinguish between statistically significant and non-significant findings
+  5. Never make medical recommendations or diagnoses
+  6. If information is not in the sources, explicitly state "Not found in provided documents"
+
+  When answering:
+  - Quote exact numbers from tables when discussing statistics
+  - Preserve confidence intervals, p-values, and statistical measures exactly as stated
+  - Note limitations and caveats mentioned in the source
+  - Use format: [CIT-XXX] for inline citations
+  - Maintain scientific rigor and precision
+
+  Context: {context}
+
+  Query: {query}
+
+  Answer:
+
+query_understanding_prompt: |
+  Analyze the following medical research query and extract:
+
+  1. Query Type: Classify as one of [factual_lookup, table_query, comparative_analysis, trend_analysis, safety_data]
+  2. Required Content Types: Which types needed [text, tables, figures]
+  3. Filters: Extract any mentioned filters (document names, study phases, therapeutic areas, sections)
+  4. Temporal Aspects: Any time-related constraints
+  5. Statistical Requirements: Whether the query requires specific statistical data
+
+  Query: {query}
+
+  Respond in JSON format:
+  {{
+    "query_type": "<type>",
+    "content_types": ["<type1>", "<type2>"],
+    "filters": {{
+      "doc_ids": [],
+      "study_phase": null,
+      "therapeutic_area": null,
+      "sections": []
+    }},
+    "temporal": null,
+    "requires_statistics": true/false,
+    "complexity": "simple/moderate/complex"
+  }}
+
+query_decomposition_prompt: |
+  Break down this complex medical research query into specific sub-questions that can be answered from individual documents or sections.
+
+  Query: {query}
+
+  Provide:
+  1. Main research question
+  2. Sub-questions (numbered list, each focused and answerable from a single source)
+  3. Required information for each sub-question (text/table/figure)
+  4. Suggested retrieval strategy for each
+
+  Format as structured JSON:
+  {{
+    "main_question": "<question>",
+    "sub_questions": [
+      {{
+        "question": "<sub-question>",
+        "content_type": "<text|table|figure>",
+        "retrieval_strategy": "<strategy>"
+      }}
+    ]
+  }}
+
+table_summary_prompt: |
+  Generate a concise, accurate summary of the following medical data table.
+
+  Table Caption: {caption}
+  Table Content (Markdown):
+  {table_markdown}
+
+  Requirements:
+  - Describe the table structure (rows, columns, groupings)
+  - Summarize key findings with exact numbers
+  - Preserve statistical significance indicators
+  - Note any missing data or caveats
+  - Keep summary under 256 words
+  - Use medical terminology appropriately
+
+  Summary:
+
+figure_description_prompt: |
+  You are viewing a chart or figure from a Clinical Study Report. Provide a detailed description for semantic search and understanding.
+
+  Figure Caption: {caption}
+
+  Describe:
+  1. Chart type (bar chart, line graph, Kaplan-Meier curve, forest plot, etc.)
+  2. Axes labels and scales
+  3. Data series and groupings
+  4. Key trends or patterns
+  5. Notable data points or findings
+  6. Statistical annotations (p-values, confidence intervals)
+  7. Overall conclusion from the visual
+
+  Be precise with numbers and medical terms.
+
+  Description:
+
+citation_generation_prompt: |
+  When generating your response, insert citation markers [CIT-N] immediately after each factual claim or data point.
+
+  Example:
+  "The primary endpoint was met with a response rate of 78% (95% CI: 72-84) [CIT-1]. This was significantly higher than the control group at 45% (95% CI: 39-51, p<0.001) [CIT-2]."
+
+  Rules:
+  - Every factual claim gets a citation
+  - Every numerical value gets a citation
+  - Use sequential numbering [CIT-1], [CIT-2], etc.
+  - Place citation immediately after the claim, before punctuation
+
+  Context: {context}
+  Query: {query}
+
+  Answer with citations:
+
+multi_document_comparison_prompt: |
+  Compare the following information across multiple clinical studies. Provide a structured comparison highlighting similarities and differences.
+
+  Studies:
+  {studies_context}
+
+  Comparison Question: {query}
+
+  Provide:
+  1. Summary table comparing key metrics across studies
+  2. Notable similarities
+  3. Important differences
+  4. Potential reasons for differences (if evident in the data)
+  5. Citation for each data point
+
+  Format as structured comparison with clear citations.
+
+  Comparison:
+
+verification_prompt: |
+  Verify that the following claim is accurately supported by the source material.
+
+  Claim: {claim}
+
+  Source Material:
+  {source_content}
+
+  Respond with:
+  1. VERIFIED or NOT_VERIFIED
+  2. Explanation: Why the claim is/isn't supported
+  3. Direct quote from source if verified
+  4. Suggested correction if not verified
+
+  Format as JSON:
+  {{
+    "status": "VERIFIED|NOT_VERIFIED",
+    "explanation": "<explanation>",
+    "source_quote": "<quote>",
+    "correction": "<correction if needed>"
+  }}
+
+safety_data_prompt: |
+  Extract and summarize safety data from the provided context. Be extremely precise with adverse event frequencies and severity classifications.
+
+  Context: {context}
+
+  Extract:
+  1. Adverse events with frequencies (exact percentages or counts)
+  2. Severity classifications (Grade 1-5 or Mild/Moderate/Severe)
+  3. Serious adverse events (SAEs)
+  4. Deaths and their relationship to treatment
+  5. Dose reductions or discontinuations due to adverse events
+
+  Preserve all statistical details and cite each data point.
+
+  Safety Summary:
+
+statistical_extraction_prompt: |
+  Extract statistical data from the provided context with absolute precision.
+
+  Context: {context}
+
+  Extract:
+  - Point estimates (percentages, rates, means, medians)
+  - Confidence intervals (95% CI or other)
+  - P-values
+  - Hazard ratios / Odds ratios / Risk ratios
+  - Sample sizes (n=)
+  - Statistical test used
+
+  Preserve exact formatting and precision of numbers. Include citations.
+
+  Format as structured JSON:
+  {{
+    "statistics": [
+      {{
+        "metric": "<metric name>",
+        "value": "<value>",
+        "ci": "<confidence interval>",
+        "p_value": "<p-value>",
+        "sample_size": "<n>",
+        "citation": "[CIT-X]"
+      }}
+    ]
+  }}

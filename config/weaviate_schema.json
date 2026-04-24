@@ -1,0 +1,301 @@
+{
+  "classes": [
+    {
+      "class": "TextChunk",
+      "description": "Text chunks extracted from medical documents with semantic chunking",
+      "vectorizer": "none",
+      "vectorIndexType": "hnsw",
+      "vectorIndexConfig": {
+        "distance": "cosine",
+        "ef": 128,
+        "efConstruction": 256,
+        "maxConnections": 32
+      },
+      "properties": [
+        {
+          "name": "content",
+          "dataType": ["text"],
+          "description": "The actual text content of the chunk",
+          "tokenization": "word",
+          "indexFilterable": true,
+          "indexSearchable": true
+        },
+        {
+          "name": "doc_id",
+          "dataType": ["string"],
+          "description": "Unique identifier for the source document",
+          "indexFilterable": true,
+          "indexSearchable": true
+        },
+        {
+          "name": "doc_title",
+          "dataType": ["string"],
+          "description": "Title of the source document",
+          "indexFilterable": true,
+          "indexSearchable": true
+        },
+        {
+          "name": "page_num",
+          "dataType": ["int"],
+          "description": "Page number where this chunk appears",
+          "indexFilterable": true
+        },
+        {
+          "name": "section_title",
+          "dataType": ["string"],
+          "description": "Title of the section this chunk belongs to",
+          "indexFilterable": true,
+          "indexSearchable": true
+        },
+        {
+          "name": "section_hierarchy",
+          "dataType": ["string[]"],
+          "description": "Full section hierarchy (e.g., ['Results', 'Efficacy', 'Primary Endpoint'])",
+          "indexFilterable": true
+        },
+        {
+          "name": "chunk_index",
+          "dataType": ["int"],
+          "description": "Sequential index of chunk within the document",
+          "indexFilterable": true
+        },
+        {
+          "name": "chunk_type",
+          "dataType": ["string"],
+          "description": "Type of chunk: text, table_summary, figure_description",
+          "indexFilterable": true
+        },
+        {
+          "name": "contains_table",
+          "dataType": ["boolean"],
+          "description": "Whether this chunk references a table",
+          "indexFilterable": true
+        },
+        {
+          "name": "contains_figure",
+          "dataType": ["boolean"],
+          "description": "Whether this chunk references a figure",
+          "indexFilterable": true
+        },
+        {
+          "name": "statistical_content",
+          "dataType": ["boolean"],
+          "description": "Whether this chunk contains statistical data",
+          "indexFilterable": true
+        },
+        {
+          "name": "study_id",
+          "dataType": ["string"],
+          "description": "Clinical study identifier",
+          "indexFilterable": true
+        },
+        {
+          "name": "study_phase",
+          "dataType": ["string"],
+          "description": "Study phase (e.g., Phase I, Phase II, Phase III)",
+          "indexFilterable": true
+        },
+        {
+          "name": "therapeutic_area",
+          "dataType": ["string"],
+          "description": "Therapeutic area (e.g., Oncology, Cardiology)",
+          "indexFilterable": true
+        },
+        {
+          "name": "bounding_box",
+          "dataType": ["string"],
+          "description": "Bounding box coordinates as JSON string for citation highlighting",
+          "indexFilterable": false
+        }
+      ]
+    },
+    {
+      "class": "Table",
+      "description": "Tables extracted from medical documents with structured data",
+      "vectorizer": "none",
+      "vectorIndexType": "hnsw",
+      "vectorIndexConfig": {
+        "distance": "cosine",
+        "ef": 128,
+        "efConstruction": 256,
+        "maxConnections": 32
+      },
+      "properties": [
+        {
+          "name": "summary",
+          "dataType": ["text"],
+          "description": "LLM-generated natural language summary of the table",
+          "tokenization": "word",
+          "indexFilterable": true,
+          "indexSearchable": true
+        },
+        {
+          "name": "markdown_content",
+          "dataType": ["text"],
+          "description": "Table content in markdown format",
+          "tokenization": "word",
+          "indexFilterable": false,
+          "indexSearchable": true
+        },
+        {
+          "name": "structured_data",
+          "dataType": ["text"],
+          "description": "Table data as JSON string for structured querying",
+          "indexFilterable": false,
+          "indexSearchable": false
+        },
+        {
+          "name": "doc_id",
+          "dataType": ["string"],
+          "description": "Unique identifier for the source document",
+          "indexFilterable": true
+        },
+        {
+          "name": "doc_title",
+          "dataType": ["string"],
+          "description": "Title of the source document",
+          "indexFilterable": true
+        },
+        {
+          "name": "page_num",
+          "dataType": ["int"],
+          "description": "Page number where this table appears",
+          "indexFilterable": true
+        },
+        {
+          "name": "table_id",
+          "dataType": ["string"],
+          "description": "Unique identifier for this table within the document",
+          "indexFilterable": true
+        },
+        {
+          "name": "table_caption",
+          "dataType": ["string"],
+          "description": "Original table caption from the document",
+          "indexFilterable": true,
+          "indexSearchable": true
+        },
+        {
+          "name": "column_headers",
+          "dataType": ["string[]"],
+          "description": "List of column headers",
+          "indexFilterable": true
+        },
+        {
+          "name": "row_count",
+          "dataType": ["int"],
+          "description": "Number of rows in the table",
+          "indexFilterable": true
+        },
+        {
+          "name": "section_title",
+          "dataType": ["string"],
+          "description": "Section where the table appears",
+          "indexFilterable": true
+        },
+        {
+          "name": "study_id",
+          "dataType": ["string"],
+          "description": "Clinical study identifier",
+          "indexFilterable": true
+        },
+        {
+          "name": "bounding_box",
+          "dataType": ["string"],
+          "description": "Bounding box coordinates as JSON string",
+          "indexFilterable": false
+        }
+      ]
+    },
+    {
+      "class": "Figure",
+      "description": "Figures and charts extracted from medical documents with vision-based descriptions",
+      "vectorizer": "none",
+      "vectorIndexType": "hnsw",
+      "vectorIndexConfig": {
+        "distance": "cosine",
+        "ef": 128,
+        "efConstruction": 256,
+        "maxConnections": 32
+      },
+      "properties": [
+        {
+          "name": "description",
+          "dataType": ["text"],
+          "description": "Vision model-generated description of the figure",
+          "tokenization": "word",
+          "indexFilterable": true,
+          "indexSearchable": true
+        },
+        {
+          "name": "image_path",
+          "dataType": ["string"],
+          "description": "Path to the extracted image file",
+          "indexFilterable": false
+        },
+        {
+          "name": "doc_id",
+          "dataType": ["string"],
+          "description": "Unique identifier for the source document",
+          "indexFilterable": true
+        },
+        {
+          "name": "doc_title",
+          "dataType": ["string"],
+          "description": "Title of the source document",
+          "indexFilterable": true
+        },
+        {
+          "name": "page_num",
+          "dataType": ["int"],
+          "description": "Page number where this figure appears",
+          "indexFilterable": true
+        },
+        {
+          "name": "figure_id",
+          "dataType": ["string"],
+          "description": "Unique identifier for this figure within the document",
+          "indexFilterable": true
+        },
+        {
+          "name": "figure_caption",
+          "dataType": ["string"],
+          "description": "Original figure caption from the document",
+          "indexFilterable": true,
+          "indexSearchable": true
+        },
+        {
+          "name": "chart_type",
+          "dataType": ["string"],
+          "description": "Type of chart (e.g., bar, line, scatter, kaplan-meier)",
+          "indexFilterable": true
+        },
+        {
+          "name": "section_title",
+          "dataType": ["string"],
+          "description": "Section where the figure appears",
+          "indexFilterable": true
+        },
+        {
+          "name": "study_id",
+          "dataType": ["string"],
+          "description": "Clinical study identifier",
+          "indexFilterable": true
+        },
+        {
+          "name": "ocr_text",
+          "dataType": ["text"],
+          "description": "OCR-extracted text from the figure",
+          "indexFilterable": false,
+          "indexSearchable": true
+        },
+        {
+          "name": "bounding_box",
+          "dataType": ["string"],
+          "description": "Bounding box coordinates as JSON string",
+          "indexFilterable": false
+        }
+      ]
+    }
+  ]
+}
