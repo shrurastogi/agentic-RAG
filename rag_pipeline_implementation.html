@@ -1,0 +1,303 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,sans-serif)}
+.wrap{padding:1rem 0}
+.tabs{display:flex;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:12px}
+.tab{flex:1;padding:9px 6px;font-size:12px;font-weight:500;text-align:center;cursor:pointer;background:var(--color-background-secondary);color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary);transition:background .15s,color .15s}
+.tab:last-child{border-right:none}
+.tab.on{background:var(--color-background-primary);color:var(--color-text-primary)}
+.panel{display:none}.panel.on{display:block}
+.phase-label{font-size:11px;font-weight:500;padding:3px 9px;border-radius:5px;display:inline-block;margin-bottom:10px}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.fbox{font-size:11.5px;font-weight:500;padding:6px 11px;border-radius:7px;border:0.5px solid;text-align:center}
+.farr{font-size:13px;color:var(--color-text-secondary)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-bottom:12px}
+.card{border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:10px 12px;background:var(--color-background-secondary)}
+.card-t{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:5px}
+.card-b{font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:12px 14px;font-family:var(--font-mono,monospace);font-size:11.5px;line-height:1.65;color:var(--color-text-primary);overflow-x:auto;margin-bottom:10px;white-space:pre}
+.kw{color:#534AB7}.fn{color:#0F6E56}.st{color:#854F0B}.cm{color:var(--color-text-secondary);font-style:italic}
+.note{font-size:11.5px;color:var(--color-text-secondary);padding:8px 11px;background:var(--color-background-secondary);border-radius:7px;margin-bottom:10px;line-height:1.5}
+.section-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin:14px 0 7px}
+.choice-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.choice{flex:1;min-width:140px;border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:9px 12px;background:var(--color-background-secondary)}
+.choice-t{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.choice-b{font-size:11px;color:var(--color-text-secondary);line-height:1.45}
+.badge{font-size:10px;font-weight:500;padding:1px 6px;border-radius:4px;margin-left:5px;vertical-align:middle}
+.ask-btn{font-size:11.5px;padding:5px 12px;border-radius:7px;border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;color:var(--color-text-secondary);font-family:inherit}
+.ask-btn:hover{background:var(--color-background-secondary)}
+</style>
+<div class="wrap">
+<div class="tabs">
+  <div class="tab on" onclick="showTab(0)">Architecture</div>
+  <div class="tab" onclick="showTab(1)">Indexing code</div>
+  <div class="tab" onclick="showTab(2)">Retrieval code</div>
+  <div class="tab" onclick="showTab(3)">Fusion + generation</div>
+  <div class="tab" onclick="showTab(4)">Tool choices</div>
+</div>
+
+<div class="panel on" id="t0">
+  <span class="phase-label" style="background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC">Phase 1 — indexing (offline, runs once)</span>
+  <div class="flow">
+    <span class="fbox" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC">PDFs / DOCXs<br>arXiv / URLs</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC">Parse &amp;<br>clean text</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC">Chunk<br>(512 tok, 64 overlap)</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC">Embed<br>(text-embedding-3)</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC">Vector store<br>(FAISS / Chroma)</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC">Metadata<br>index (BM25)</span>
+  </div>
+  <span class="phase-label" style="background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5">Phase 2 — retrieval (runs per section)</span>
+  <div class="flow">
+    <span class="fbox" style="background:#E1F5EE;color:#085041;border-color:#5DCAA5">Section slot<br>+ [CITE:topic]</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#E1F5EE;color:#085041;border-color:#5DCAA5">Query<br>expansion (HyDE)</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#E1F5EE;color:#085041;border-color:#5DCAA5">Dense k-NN<br>+ sparse BM25</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#E1F5EE;color:#085041;border-color:#5DCAA5">Reciprocal<br>rank fusion</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#E1F5EE;color:#085041;border-color:#5DCAA5">Rerank<br>(cross-encoder)</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#E1F5EE;color:#085041;border-color:#5DCAA5">Top-k chunks<br>→ context window</span>
+  </div>
+  <span class="phase-label" style="background:#FAEEDA;color:#633806;border:0.5px solid #EF9F27">Phase 3 — fusion generation</span>
+  <div class="flow">
+    <span class="fbox" style="background:#FAEEDA;color:#633806;border-color:#EF9F27">RAG chunks</span>
+    <span class="farr">+</span>
+    <span class="fbox" style="background:#FAEEDA;color:#633806;border-color:#EF9F27">Web search<br>results</span>
+    <span class="farr">+</span>
+    <span class="fbox" style="background:#FAEEDA;color:#633806;border-color:#EF9F27">LLM world<br>knowledge</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#FAEEDA;color:#633806;border-color:#EF9F27">Writer LLM<br>(section draft)</span>
+    <span class="farr">›</span>
+    <span class="fbox" style="background:#FAEEDA;color:#633806;border-color:#EF9F27">Self-critique<br>+ revise</span>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="card-t">HyDE (hypothetical document embedding)</div><div class="card-b">Before embedding the query, ask the LLM to write a hypothetical answer. Embed that answer instead — it sits much closer to real documents in embedding space than a short keyword query.</div></div>
+    <div class="card"><div class="card-t">Hybrid search (dense + sparse)</div><div class="card-b">Dense k-NN catches semantic matches ("cardiovascular disease" ↔ "heart failure"). BM25 catches exact keyword matches (author names, model IDs, acronyms). Neither alone is sufficient.</div></div>
+    <div class="card"><div class="card-t">Reciprocal rank fusion (RRF)</div><div class="card-b">Merges ranked lists from dense and sparse retrieval without needing normalised scores. Formula: score = Σ 1/(k + rank_i) where k=60. Simple and robust.</div></div>
+    <div class="card"><div class="card-t">Cross-encoder reranking</div><div class="card-b">A second, slower model reads (query, chunk) pairs together and assigns a relevance score. Significantly improves precision — run on top-20 candidates to get the final top-5.</div></div>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('Show me the indexing code for the RAG pipeline')">Show me the indexing code ↗</button>
+</div>
+
+<div class="panel" id="t1">
+  <div class="section-title">Document ingestion &amp; chunking</div>
+  <div class="code-block"><span class="cm"># requirements: langchain, pypdf, sentence-transformers, faiss-cpu, rank-bm25</span>
+
+<span class="kw">from</span> langchain.document_loaders <span class="kw">import</span> PyPDFLoader, UnstructuredURLLoader
+<span class="kw">from</span> langchain.text_splitter <span class="kw">import</span> RecursiveCharacterTextSplitter
+<span class="kw">from</span> langchain.embeddings <span class="kw">import</span> OpenAIEmbeddings
+<span class="kw">from</span> langchain.vectorstores <span class="kw">import</span> FAISS
+<span class="kw">from</span> rank_bm25 <span class="kw">import</span> BM25Okapi
+<span class="kw">import</span> pickle, json
+
+<span class="kw">def</span> <span class="fn">build_index</span>(pdf_paths: list[str], urls: list[str]) -> dict:
+    <span class="cm"># 1. Load documents</span>
+    docs = []
+    <span class="kw">for</span> path <span class="kw">in</span> pdf_paths:
+        docs.extend(PyPDFLoader(path).load())
+    <span class="kw">if</span> urls:
+        docs.extend(UnstructuredURLLoader(urls).load())
+
+    <span class="cm"># 2. Chunk — 512 tokens, 64-token overlap, respect sentence boundaries</span>
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=<span class="st">512</span>, chunk_overlap=<span class="st">64</span>,
+        separators=[<span class="st">"\n\n"</span>, <span class="st">"\n"</span>, <span class="st">". "</span>, <span class="st">" "</span>]
+    )
+    chunks = splitter.split_documents(docs)
+
+    <span class="cm"># 3. Attach metadata (source, page, section heading if detectable)</span>
+    <span class="kw">for</span> i, c <span class="kw">in</span> enumerate(chunks):
+        c.metadata[<span class="st">"chunk_id"</span>] = i
+
+    <span class="cm"># 4. Dense embeddings → FAISS vector store</span>
+    embedder = OpenAIEmbeddings(model=<span class="st">"text-embedding-3-small"</span>)
+    vector_store = FAISS.from_documents(chunks, embedder)
+    vector_store.save_local(<span class="st">"index/faiss"</span>)
+
+    <span class="cm"># 5. Sparse BM25 index (keyword search fallback)</span>
+    tokenised = [c.page_content.lower().split() <span class="kw">for</span> c <span class="kw">in</span> chunks]
+    bm25 = BM25Okapi(tokenised)
+    <span class="kw">with</span> open(<span class="st">"index/bm25.pkl"</span>, <span class="st">"wb"</span>) <span class="kw">as</span> f:
+        pickle.dump({<span class="st">"bm25"</span>: bm25, <span class="st">"chunks"</span>: chunks}, f)
+
+    <span class="kw">return</span> {<span class="st">"chunks"</span>: len(chunks), <span class="st">"status"</span>: <span class="st">"ok"</span>}</div>
+  <div class="note">Chunk size matters a lot. For academic papers, 512 tokens with 64 overlap captures one cohesive argument without splitting across method/result boundaries. Go smaller (256) for dense technical tables, larger (1024) for narrative review papers.</div>
+  <button class="ask-btn" onclick="sendPrompt('Show me the retrieval code for the RAG pipeline')">Next: retrieval code ↗</button>
+</div>
+
+<div class="panel" id="t2">
+  <div class="section-title">HyDE query expansion + hybrid retrieval + RRF</div>
+  <div class="code-block"><span class="kw">from</span> langchain.vectorstores <span class="kw">import</span> FAISS
+<span class="kw">from</span> langchain.embeddings <span class="kw">import</span> OpenAIEmbeddings
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> CrossEncoder
+<span class="kw">import</span> pickle, openai
+
+<span class="kw">def</span> <span class="fn">hyde_expand</span>(cite_slot: str, paper_context: dict) -> str:
+    <span class="cm">"""Ask LLM to write a hypothetical passage — embed this, not the raw query."""</span>
+    prompt = <span class="st">f"""Write a 3-sentence passage that would appear in the
+{paper_context['section']} section of a {paper_context['type']} paper
+about {paper_context['topic']}, specifically addressing: {cite_slot}"""</span>
+    resp = openai.chat.completions.create(
+        model=<span class="st">"gpt-4o-mini"</span>, messages=[{<span class="st">"role"</span>:<span class="st">"user"</span>,<span class="st">"content"</span>:prompt}]
+    )
+    <span class="kw">return</span> resp.choices[<span class="st">0</span>].message.content
+
+<span class="kw">def</span> <span class="fn">hybrid_retrieve</span>(cite_slot: str, ctx: dict, k: int = <span class="st">20</span>) -> list:
+    <span class="cm"># 1. HyDE expansion</span>
+    hypo_doc = hyde_expand(cite_slot, ctx)
+
+    <span class="cm"># 2. Dense retrieval (embedding similarity)</span>
+    embedder = OpenAIEmbeddings(model=<span class="st">"text-embedding-3-small"</span>)
+    vs = FAISS.load_local(<span class="st">"index/faiss"</span>, embedder)
+    dense_hits = vs.similarity_search_with_score(hypo_doc, k=k)
+
+    <span class="cm"># 3. Sparse retrieval (BM25 keyword)</span>
+    <span class="kw">with</span> open(<span class="st">"index/bm25.pkl"</span>, <span class="st">"rb"</span>) <span class="kw">as</span> f:
+        store = pickle.load(f)
+    tokens = cite_slot.lower().split()
+    bm25_scores = store[<span class="st">"bm25"</span>].get_scores(tokens)
+    bm25_ranked = sorted(enumerate(bm25_scores), key=<span class="kw">lambda</span> x: -x[<span class="st">1</span>])[:k]
+
+    <span class="cm"># 4. Reciprocal rank fusion</span>
+    K = <span class="st">60</span>
+    scores = {}
+    <span class="kw">for</span> rank, (doc, _) <span class="kw">in</span> enumerate(dense_hits):
+        cid = doc.metadata[<span class="st">"chunk_id"</span>]
+        scores[cid] = scores.get(cid, <span class="st">0</span>) + <span class="st">1</span> / (K + rank)
+    <span class="kw">for</span> rank, (cid, _) <span class="kw">in</span> enumerate(bm25_ranked):
+        scores[cid] = scores.get(cid, <span class="st">0</span>) + <span class="st">1</span> / (K + rank)
+
+    <span class="cm"># 5. Cross-encoder rerank on top-20 candidates</span>
+    chunks = store[<span class="st">"chunks"</span>]
+    top20 = sorted(scores, key=<span class="kw">lambda</span> c: -scores[c])[:20]
+    reranker = CrossEncoder(<span class="st">"cross-encoder/ms-marco-MiniLM-L-6-v2"</span>)
+    pairs = [(cite_slot, chunks[c].page_content) <span class="kw">for</span> c <span class="kw">in</span> top20]
+    rerank_scores = reranker.predict(pairs)
+
+    ranked = sorted(zip(top20, rerank_scores), key=<span class="kw">lambda</span> x: -x[<span class="st">1</span>])
+    <span class="kw">return</span> [chunks[c] <span class="kw">for</span> c, _ <span class="kw">in</span> ranked[:5]]  <span class="cm"># final top-5</span></div>
+  <div class="note">The cross-encoder (ms-marco-MiniLM-L-6-v2) runs locally in ~30ms per pair on CPU. For a 20-candidate rerank, that's under 1 second — acceptable for batch section generation. Switch to a larger model (L-12) for higher-stakes reranking.</div>
+  <button class="ask-btn" onclick="sendPrompt('Show me the fusion and generation code for the RAG pipeline')">Next: fusion + generation ↗</button>
+</div>
+
+<div class="panel" id="t3">
+  <div class="section-title">Tri-engine fusion and section writer</div>
+  <div class="code-block"><span class="kw">import</span> asyncio
+<span class="kw">from</span> tavily <span class="kw">import</span> TavilyClient  <span class="cm"># web search</span>
+
+<span class="kw">async def</span> <span class="fn">web_search</span>(query: str) -> list[str]:
+    client = TavilyClient(api_key=<span class="st">"..."</span>)
+    results = client.search(query, max_results=<span class="st">5</span>)
+    <span class="kw">return</span> [r[<span class="st">"content"</span>] <span class="kw">for</span> r <span class="kw">in</span> results[<span class="st">"results"</span>]]
+
+<span class="kw">async def</span> <span class="fn">generate_section</span>(section_slot: dict, paper_ctx: dict) -> str:
+    cite_slots = section_slot.get(<span class="st">"cite_slots"</span>, [])
+
+    <span class="cm"># Run all three sources concurrently</span>
+    rag_tasks = [hybrid_retrieve(slot, paper_ctx) <span class="kw">for</span> slot <span class="kw">in</span> cite_slots]
+    web_task  = web_search(<span class="st">f"{paper_ctx['topic']} {section_slot['title']} recent"</span>)
+
+    rag_results, web_results = <span class="kw">await</span> asyncio.gather(
+        asyncio.gather(*rag_tasks), web_task
+    )
+
+    <span class="cm"># Flatten RAG chunks, deduplicate by chunk_id</span>
+    seen, rag_chunks = set(), []
+    <span class="kw">for</span> hits <span class="kw">in</span> rag_results:
+        <span class="kw">for</span> doc <span class="kw">in</span> hits:
+            cid = doc.metadata[<span class="st">"chunk_id"</span>]
+            <span class="kw">if</span> cid <span class="kw">not in</span> seen:
+                seen.add(cid); rag_chunks.append(doc.page_content)
+
+    <span class="cm"># Compose context block for writer LLM</span>
+    context = <span class="st">"\n\n"</span>.join([
+        <span class="st">"## Retrieved literature\n"</span> + <span class="st">"\n---\n"</span>.join(rag_chunks[:8]),
+        <span class="st">"## Web search findings\n"</span> + <span class="st">"\n---\n"</span>.join(web_results),
+    ])
+
+    writer_prompt = <span class="st">f"""You are writing the '{section_slot['title']}' section
+of a {paper_ctx['type']} paper on {paper_ctx['topic']}.
+
+Target length: {section_slot['word_budget']} words.
+Subsections: {section_slot['subheadings']}
+Citation slots to fill: {cite_slots}
+
+Use the retrieved context below as primary evidence.
+Add your own synthesis where context is insufficient.
+Insert [CITE:source] markers inline. Do NOT hallucinate statistics.
+
+{context}
+
+Write the section now:"""</span>
+
+    draft = openai.chat.completions.create(
+        model=<span class="st">"gpt-4o"</span>, messages=[{<span class="st">"role"</span>:<span class="st">"user"</span>,<span class="st">"content"</span>:writer_prompt}]
+    ).choices[<span class="st">0</span>].message.content
+
+    <span class="cm"># Self-critique pass</span>
+    critique_prompt = <span class="st">f"""Review this draft section for:
+1. Unsupported factual claims (flag with [UNSUPPORTED])
+2. Missing citations where evidence was available
+3. Logical gaps between paragraphs
+4. Deviation from {section_slot['word_budget']}-word target
+
+Draft:\n{draft}\n\nReturn the improved draft only."""</span>
+
+    revised = openai.chat.completions.create(
+        model=<span class="st">"gpt-4o"</span>, messages=[{<span class="st">"role"</span>:<span class="st">"user"</span>,<span class="st">"content"</span>:critique_prompt}]
+    ).choices[<span class="st">0</span>].message.content
+
+    <span class="kw">return</span> revised</div>
+  <div class="note">Run <code>generate_section</code> sequentially per section (Introduction → Related Work → Methods → Results → Discussion → Conclusion) and append to a manuscript dict. The sequential order matters — later sections can reference earlier ones in the context.</div>
+  <button class="ask-btn" onclick="sendPrompt('What are the best tool choices for building the RAG pipeline?')">See tool choices ↗</button>
+</div>
+
+<div class="panel" id="t4">
+  <div class="section-title">Vector store</div>
+  <div class="choice-row">
+    <div class="choice"><div class="choice-t">FAISS <span class="badge" style="background:#E1F5EE;color:#085041">recommended</span></div><div class="choice-b">Local, fast, free. Best for single-machine deployments with &lt;1M chunks. No server needed — index lives on disk.</div></div>
+    <div class="choice"><div class="choice-t">Chroma</div><div class="choice-b">Open-source, persistent, metadata-rich filtering. Good if you need SQL-style filtering alongside vector search.</div></div>
+    <div class="choice"><div class="choice-t">Pinecone</div><div class="choice-b">Managed cloud service. Best for multi-user SaaS deployments or when you need serverless scaling.</div></div>
+  </div>
+  <div class="section-title">Embedding model</div>
+  <div class="choice-row">
+    <div class="choice"><div class="choice-t">text-embedding-3-small <span class="badge" style="background:#E1F5EE;color:#085041">recommended</span></div><div class="choice-b">1536-dim, cheap ($0.02/M tokens), excellent quality. Best cost/quality tradeoff for academic paper RAG.</div></div>
+    <div class="choice"><div class="choice-t">text-embedding-3-large</div><div class="choice-b">3072-dim. Meaningfully better on technical/scientific domains. Use if retrieval quality is a bottleneck.</div></div>
+    <div class="choice"><div class="choice-t">BGE-M3 (local)</div><div class="choice-b">Open-source, multilingual, runs on GPU/CPU. Best for offline / data-private deployments on your own hardware.</div></div>
+  </div>
+  <div class="section-title">Reranker</div>
+  <div class="choice-row">
+    <div class="choice"><div class="choice-t">ms-marco-MiniLM-L-6 <span class="badge" style="background:#E1F5EE;color:#085041">recommended</span></div><div class="choice-b">~30ms per pair on CPU. Excellent for the 20-candidate rerank step. Free, runs locally.</div></div>
+    <div class="choice"><div class="choice-t">Cohere Rerank</div><div class="choice-b">API-based, higher accuracy, no local GPU needed. Best for cloud deployments with latency budget.</div></div>
+  </div>
+  <div class="section-title">Web search</div>
+  <div class="choice-row">
+    <div class="choice"><div class="choice-t">Tavily <span class="badge" style="background:#E1F5EE;color:#085041">recommended</span></div><div class="choice-b">Research-optimised API, returns clean text (not HTML), citation-friendly. 1000 free searches/month.</div></div>
+    <div class="choice"><div class="choice-t">Serper / SerpAPI</div><div class="choice-b">Google results. More coverage, but returns snippets only — need extra fetching for full content.</div></div>
+  </div>
+  <div class="section-title">Orchestration</div>
+  <div class="choice-row">
+    <div class="choice"><div class="choice-t">LangChain <span class="badge" style="background:#E1F5EE;color:#085041">recommended</span></div><div class="choice-b">All loaders, splitters, retrievers, and chains already built. Fastest path to a working pipeline.</div></div>
+    <div class="choice"><div class="choice-t">LlamaIndex</div><div class="choice-b">More RAG-specific abstractions (query engines, node parsers, knowledge graphs). Better for complex retrieval graphs.</div></div>
+    <div class="choice"><div class="choice-t">Raw Python</div><div class="choice-b">Maximum control, no framework lock-in. Use if your retrieval logic is highly custom (e.g. KG-augmented RAG).</div></div>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('How do I implement the coherence check stage for the research article pipeline?')">How to implement coherence check ↗</button>
+</div>
+
+</div>
+<script>
+function showTab(n){
+  for(var i=0;i<5;i++){
+    document.querySelectorAll('.tab')[i].classList.toggle('on',i===n);
+    document.getElementById('t'+i).classList.toggle('on',i===n);
+  }
+}
+</script>

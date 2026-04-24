@@ -1,0 +1,265 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wf{font-family:var(--font-sans,sans-serif);padding:1rem 0}
+.pipe{display:flex;align-items:stretch;gap:0;width:100%;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.stg{flex:1;padding:12px 6px 10px;cursor:pointer;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;align-items:center;gap:5px;transition:background .15s}
+.stg:last-child{border-right:none}
+.stg:hover{background:var(--color-background-primary)}
+.stg.on{background:var(--color-background-primary)}
+.stg-num{font-size:10px;color:var(--color-text-secondary);font-weight:500}
+.stg-dot{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.stg-lbl{font-size:10px;font-weight:500;text-align:center;color:var(--color-text-primary);line-height:1.3}
+.stg.on .stg-lbl{font-weight:500}
+.bar{display:flex;gap:3px;margin:8px 0}
+.bar-seg{height:3px;flex:1;border-radius:2px;background:var(--color-border-tertiary)}
+.panel{display:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.125rem;background:var(--color-background-primary)}
+.panel.on{display:block}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ph-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500;flex-shrink:0}
+.ph-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.ph-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:12px}
+.card{background:var(--color-background-secondary);border-radius:8px;padding:10px 11px}
+.card-t{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.card-b{font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.mini-flow{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:10px}
+.mf-box{font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px}
+.mf-arr{font-size:12px;color:var(--color-text-secondary)}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.pill{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;border:0.5px solid}
+.foot{font-size:11.5px;color:var(--color-text-secondary);padding:8px 11px;background:var(--color-background-secondary);border-radius:7px;margin-bottom:10px}
+.nav{display:flex;gap:8px}
+.nav-btn{font-size:11.5px;padding:5px 12px;border-radius:7px;border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;color:var(--color-text-secondary);font-family:inherit}
+.nav-btn:last-child{margin-left:auto}
+.nav-btn:hover{background:var(--color-background-secondary)}
+</style>
+
+<div class="wf">
+
+<div class="pipe" id="pipe">
+  <div class="stg on" onclick="show(0)" id="s0">
+    <span class="stg-num">1</span>
+    <span class="stg-dot" style="background:#EEEDFE;color:#3C3489">Aa</span>
+    <span class="stg-lbl">Article<br>Type</span>
+  </div>
+  <div class="stg" onclick="show(1)" id="s1">
+    <span class="stg-num">2</span>
+    <span class="stg-dot" style="background:#E1F5EE;color:#085041">Pl</span>
+    <span class="stg-lbl">Planning</span>
+  </div>
+  <div class="stg" onclick="show(2)" id="s2">
+    <span class="stg-num">3</span>
+    <span class="stg-dot" style="background:#FAEEDA;color:#633806">Db</span>
+    <span class="stg-lbl">Background<br>Data</span>
+  </div>
+  <div class="stg" onclick="show(3)" id="s3">
+    <span class="stg-num">4</span>
+    <span class="stg-dot" style="background:#FAECE7;color:#712B13">Gn</span>
+    <span class="stg-lbl">Generation</span>
+  </div>
+  <div class="stg" onclick="show(4)" id="s4">
+    <span class="stg-num">5</span>
+    <span class="stg-dot" style="background:#E6F1FB;color:#0C447C">Ch</span>
+    <span class="stg-lbl">Coherence<br>Check</span>
+  </div>
+  <div class="stg" onclick="show(5)" id="s5">
+    <span class="stg-num">6</span>
+    <span class="stg-dot" style="background:#EAF3DE;color:#27500A">Ex</span>
+    <span class="stg-lbl">Export</span>
+  </div>
+</div>
+
+<div class="bar" id="bar">
+  <div class="bar-seg" id="b0" style="background:#534AB7"></div>
+  <div class="bar-seg" id="b1"></div>
+  <div class="bar-seg" id="b2"></div>
+  <div class="bar-seg" id="b3"></div>
+  <div class="bar-seg" id="b4"></div>
+  <div class="bar-seg" id="b5"></div>
+</div>
+
+<div class="panel on" id="p0">
+  <div class="ph">
+    <span class="ph-icon" style="background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC">Aa</span>
+    <div><div class="ph-title">Stage 1 — Article type &amp; scope</div><div class="ph-sub">Define the class of paper, venue, and research domain before anything else is generated</div></div>
+  </div>
+  <div class="mini-flow">
+    <span class="mf-box" style="background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC">User selects type</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC">Venue + style loaded</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC">Brief JSON created</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC">Passed downstream</span>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="card-t">Paper category</div><div class="card-b">Empirical study · Systematic review · Survey · Case study · Position paper · Short paper · Extended abstract</div></div>
+    <div class="card"><div class="card-t">Target venue &amp; citation style</div><div class="card-b">Journal / conference selection auto-loads citation format (APA, IEEE, ACM, AMA, Chicago) and section templates</div></div>
+    <div class="card"><div class="card-t">Domain &amp; keywords</div><div class="card-b">Research domain, topic keywords, and scope constraints prime all downstream generation and retrieval engines</div></div>
+    <div class="card"><div class="card-t">Author metadata</div><div class="card-b">Author names, affiliations, ORCID IDs, funding acknowledgments, conflict-of-interest statements</div></div>
+  </div>
+  <div class="foot">Output: a structured JSON brief passed as shared context to all later stages.</div>
+  <div class="nav"><button class="nav-btn" onclick="show(1)">Planning ›</button></div>
+</div>
+
+<div class="panel" id="p1">
+  <div class="ph">
+    <span class="ph-icon" style="background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5">Pl</span>
+    <div><div class="ph-title">Stage 2 — Planning &amp; outline generation</div><div class="ph-sub">LLM builds a full section scaffold with word-budget targets and argument maps</div></div>
+  </div>
+  <div class="mini-flow">
+    <span class="mf-box" style="background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5">Brief</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5">LLM planner</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5">Outline + budgets</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5">Human review</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5">Approved outline</span>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="card-t">Section scaffolding</div><div class="card-b">LLM proposes sections (Abstract · Intro · Related Work · Methods · Results · Discussion · Conclusion) with sub-headings tailored to paper type</div></div>
+    <div class="card"><div class="card-t">Word &amp; figure budgets</div><div class="card-b">Target length per section, estimated table count, image/figure placement markers inserted as [FIG:] placeholders</div></div>
+    <div class="card"><div class="card-t">Argument mapping</div><div class="card-b">High-level thesis → supporting claims → evidence slots; ensures logical coherence before any writing begins</div></div>
+    <div class="card"><div class="card-t">Citation blueprint</div><div class="card-b">Key reference slots marked as [CITE:topic] so the RAG engine knows exactly what evidence to surface per section</div></div>
+  </div>
+  <div class="foot">Human can edit the outline before generation proceeds — all changes persist downstream.</div>
+  <div class="nav"><button class="nav-btn" onclick="show(0)">‹ Article type</button><button class="nav-btn" onclick="show(2)">Background data ›</button></div>
+</div>
+
+<div class="panel" id="p2">
+  <div class="ph">
+    <span class="ph-icon" style="background:#FAEEDA;color:#633806;border:0.5px solid #EF9F27">Db</span>
+    <div><div class="ph-title">Stage 3 — Background data selection</div><div class="ph-sub">Build the knowledge base that feeds RAG retrieval for all generation steps</div></div>
+  </div>
+  <div class="mini-flow">
+    <span class="mf-box" style="background:#FAEEDA;color:#633806;border:0.5px solid #EF9F27">Upload PDFs</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#FAEEDA;color:#633806;border:0.5px solid #EF9F27">Chunk + embed</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#FAEEDA;color:#633806;border:0.5px solid #EF9F27">Vector index</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#FAEEDA;color:#633806;border:0.5px solid #EF9F27">KG layer</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#FAEEDA;color:#633806;border:0.5px solid #EF9F27">Ready for RAG</span>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="card-t">Document ingestion</div><div class="card-b">Upload PDFs, DOCXs, arXiv links — auto-chunked and embedded into a vector store (FAISS / Chroma / Pinecone)</div></div>
+    <div class="card"><div class="card-t">Structured datasets</div><div class="card-b">CSV / JSON datasets, citation DBs (Semantic Scholar, Crossref, PubMed) queried and indexed alongside prose</div></div>
+    <div class="card"><div class="card-t">Web crawl seeds</div><div class="card-b">Seed URLs and search queries — crawled content embedded into the retrieval index for broader coverage</div></div>
+    <div class="card"><div class="card-t">Knowledge graph</div><div class="card-b">Entity extraction builds a lightweight KG; authors, papers, and concepts linked for relationship-aware retrieval</div></div>
+  </div>
+  <div class="foot">Index stored per-project and reused across all section generation calls — no re-embedding needed.</div>
+  <div class="nav"><button class="nav-btn" onclick="show(1)">‹ Planning</button><button class="nav-btn" onclick="show(3)">Generation ›</button></div>
+</div>
+
+<div class="panel" id="p3">
+  <div class="ph">
+    <span class="ph-icon" style="background:#FAECE7;color:#712B13;border:0.5px solid #F0997B">Gn</span>
+    <div><div class="ph-title">Stage 4 — Tri-engine section generation</div><div class="ph-sub">RAG retrieval, LLM world knowledge, and live web search fused per section — with tables and images</div></div>
+  </div>
+  <div class="pills">
+    <span class="pill" style="background:#EEEDFE;border-color:#534AB7;color:#3C3489">RAG retrieval</span>
+    <span class="pill" style="background:#E1F5EE;border-color:#0F6E56;color:#085041">LLM knowledge</span>
+    <span class="pill" style="background:#E6F1FB;border-color:#185FA5;color:#0C447C">Live web search</span>
+    <span class="pill" style="background:#FAEEDA;border-color:#854F0B;color:#633806">Table engine</span>
+    <span class="pill" style="background:#FAECE7;border-color:#993C1D;color:#712B13">Image / figure gen</span>
+  </div>
+  <div class="mini-flow">
+    <span class="mf-box" style="background:#FAECE7;color:#712B13;border:0.5px solid #F0997B">Section slot</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#FAECE7;color:#712B13;border:0.5px solid #F0997B">Retrieve</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#FAECE7;color:#712B13;border:0.5px solid #F0997B">Draft</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#FAECE7;color:#712B13;border:0.5px solid #F0997B">Self-critique</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#FAECE7;color:#712B13;border:0.5px solid #F0997B">Revise</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#FAECE7;color:#712B13;border:0.5px solid #F0997B">Next section</span>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="card-t">RAG retrieval</div><div class="card-b">Each [CITE:] slot triggers k-NN search; top passages injected as grounded context into the writer LLM call</div></div>
+    <div class="card"><div class="card-t">LLM world knowledge</div><div class="card-b">Base model contributes background reasoning, methodology descriptions, and synthesis beyond the uploaded docs</div></div>
+    <div class="card"><div class="card-t">Live web search</div><div class="card-b">Real-time queries fill gaps: latest stats, recent papers past the training cutoff, breaking results — cited inline</div></div>
+    <div class="card"><div class="card-t">Table generation</div><div class="card-b">Metrics, comparisons, and ablations auto-formatted into Markdown / LaTeX tables; column headers inferred from data</div></div>
+    <div class="card"><div class="card-t">Image &amp; figure gen</div><div class="card-b">Matplotlib / Seaborn charts from datasets; architecture diagrams as SVG; concept figures via generative model at [FIG:] slots</div></div>
+    <div class="card"><div class="card-t">Section-by-section loop</div><div class="card-b">Each outline section runs its own retrieve → draft → self-critique → revise cycle before appending to manuscript</div></div>
+  </div>
+  <div class="foot">All three text engines run concurrently; a fusion LLM call merges and deduplicates results before writing.</div>
+  <div class="nav"><button class="nav-btn" onclick="show(2)">‹ Background data</button><button class="nav-btn" onclick="show(4)">Coherence check ›</button></div>
+</div>
+
+<div class="panel" id="p4">
+  <div class="ph">
+    <span class="ph-icon" style="background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB">Ch</span>
+    <div><div class="ph-title">Stage 5 — Cross-section coherence check</div><div class="ph-sub">Automated consistency, citation, and logical-flow validation across the full assembled draft</div></div>
+  </div>
+  <div class="mini-flow">
+    <span class="mf-box" style="background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB">Full draft</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB">LLM auditor</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB">Flag list</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB">Auto-fix</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB">Author review</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB">Approved</span>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="card-t">Logical flow audit</div><div class="card-b">LLM reads the full draft end-to-end; flags contradictions between sections and non-sequitur transitions</div></div>
+    <div class="card"><div class="card-t">Citation validation</div><div class="card-b">Every [CITE] resolved against the index; duplicates merged; format normalised to target style; missing refs flagged</div></div>
+    <div class="card"><div class="card-t">Terminology consistency</div><div class="card-b">Acronym list auto-built; first-use expansion enforced; variant spellings unified (e.g. "fine-tuning" vs "fine tuning")</div></div>
+    <div class="card"><div class="card-t">Figure &amp; table refs</div><div class="card-b">Every "Figure X" and "Table Y" cross-checked against actual count; numbering auto-corrected throughout</div></div>
+    <div class="card"><div class="card-t">Abstract ↔ body sync</div><div class="card-b">Abstract claims verified to be supported in body; contributions in Introduction matched against Results section</div></div>
+    <div class="card"><div class="card-t">Human review queue</div><div class="card-b">All unresolved flags shown in a diff-style UI for the author to accept, reject, or rewrite before export</div></div>
+  </div>
+  <div class="foot">Issues resolved iteratively — a re-check pass runs automatically after each batch of fixes.</div>
+  <div class="nav"><button class="nav-btn" onclick="show(3)">‹ Generation</button><button class="nav-btn" onclick="show(5)">Export ›</button></div>
+</div>
+
+<div class="panel" id="p5">
+  <div class="ph">
+    <span class="ph-icon" style="background:#EAF3DE;color:#27500A;border:0.5px solid #97C459">Ex</span>
+    <div><div class="ph-title">Stage 6 — Document export</div><div class="ph-sub">Generate production-ready .docx and .pdf with all figures, tables, and citations properly embedded</div></div>
+  </div>
+  <div class="mini-flow">
+    <span class="mf-box" style="background:#EAF3DE;color:#27500A;border:0.5px solid #97C459">Approved draft</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#EAF3DE;color:#27500A;border:0.5px solid #97C459">Template loaded</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#EAF3DE;color:#27500A;border:0.5px solid #97C459">Assemble</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#EAF3DE;color:#27500A;border:0.5px solid #97C459">Embed media</span>
+    <span class="mf-arr">›</span>
+    <span class="mf-box" style="background:#EAF3DE;color:#27500A;border:0.5px solid #97C459">.docx + .pdf ZIP</span>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="card-t">.docx generation</div><div class="card-b">python-docx assembles: title page, ToC, styled headings, body text, inline citations, embedded figures, formatted tables, reference list</div></div>
+    <div class="card"><div class="card-t">.pdf generation</div><div class="card-b">LaTeX pipeline (Pandoc → pdflatex) or WeasyPrint HTML→PDF; supports journal templates (IEEE, ACM, Springer, Elsevier)</div></div>
+    <div class="card"><div class="card-t">Figure embedding</div><div class="card-b">All generated charts and images placed at [FIG:] markers; captions auto-populated; figure list appended at end</div></div>
+    <div class="card"><div class="card-t">Table formatting</div><div class="card-b">Markdown tables → native DOCX tables or LaTeX tabular; zebra-striping applied; column widths auto-fitted to content</div></div>
+    <div class="card"><div class="card-t">Supplementary pack</div><div class="card-b">Appendices, raw data tables, and extended figures bundled as a separate file or merged as appendix pages</div></div>
+    <div class="card"><div class="card-t">Parallel output</div><div class="card-b">Both .docx and .pdf generated simultaneously; delivered as a single ZIP download — no extra conversion step needed</div></div>
+  </div>
+  <div class="foot">Both formats generated in parallel using the same source AST — no conversion artifacts between them.</div>
+  <div class="nav"><button class="nav-btn" onclick="show(4)">‹ Coherence check</button><button class="nav-btn" onclick="sendPrompt('How would I implement the RAG retrieval pipeline for this workflow?')">How to implement RAG ↗</button></div>
+</div>
+
+</div>
+
+<script>
+var COLORS=['#534AB7','#0F6E56','#854F0B','#993C1D','#185FA5','#3B6D11'];
+function show(n){
+  for(var i=0;i<6;i++){
+    document.getElementById('s'+i).classList.toggle('on',i===n);
+    document.getElementById('p'+i).classList.toggle('on',i===n);
+    var seg=document.getElementById('b'+i);
+    seg.style.background=i<=n?COLORS[n]:'var(--color-border-tertiary)';
+  }
+}
+</script>
